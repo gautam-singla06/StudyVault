@@ -103,7 +103,7 @@ function runMigrations() {
     CREATE TABLE IF NOT EXISTS resources (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       subject_id INTEGER,
-      kind TEXT NOT NULL CHECK (kind IN ('pdf', 'image', 'video', 'link')),
+      kind TEXT NOT NULL CHECK (kind IN ('pdf', 'image', 'video', 'link', 'file')),
       title TEXT NOT NULL,
       location TEXT NOT NULL,
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -111,6 +111,29 @@ function runMigrations() {
       FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE SET NULL
     );
   `);
+
+  migrateLegacyResourcesTable();
+}
+
+function migrateLegacyResourcesTable() {
+  const tableInfo = selectOne<{ sql: string }>("SELECT sql FROM sqlite_master WHERE type='table' AND name='resources'");
+  if (tableInfo && !tableInfo.sql.includes("'file'")) {
+    getDb().run('ALTER TABLE resources RENAME TO resources_legacy;');
+    getDb().run(`
+      CREATE TABLE resources (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        subject_id INTEGER,
+        kind TEXT NOT NULL CHECK (kind IN ('pdf', 'image', 'video', 'link', 'file')),
+        title TEXT NOT NULL,
+        location TEXT NOT NULL,
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+        FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE SET NULL
+      );
+    `);
+    getDb().run('INSERT INTO resources (id, subject_id, kind, title, location, created_at, updated_at) SELECT id, subject_id, kind, title, location, created_at, updated_at FROM resources_legacy;');
+    getDb().run('DROP TABLE resources_legacy;');
+  }
 }
 
 function migrateLegacyNotesTable() {
@@ -196,8 +219,9 @@ export function createSubject(input: SubjectInput): VaultSubject {
     'INSERT INTO subjects (name, description, color, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
     [name, description, color, current, current],
   );
+  const id = lastInsertId();
   persistDatabase();
-  return toSubject(getSubjectById(lastInsertId()));
+  return toSubject(getSubjectById(id));
 }
 
 export function deleteSubject(id: number) {
@@ -227,9 +251,10 @@ export function createNote(input: NoteInput): VaultNote {
     current,
     current,
   ]);
+  const id = lastInsertId();
   touchSubject(input.subjectId);
   persistDatabase();
-  return toNote(getNoteById(lastInsertId()));
+  return toNote(getNoteById(id));
 }
 
 export function updateNote(id: number, input: NoteInput): VaultNote {
@@ -276,9 +301,10 @@ export function createResource(input: ResourceInput): VaultResource {
     current,
     current,
   ]);
+  const id = lastInsertId();
   touchSubject(input.subjectId);
   persistDatabase();
-  return toResource(getResourceById(lastInsertId()));
+  return toResource(getResourceById(id));
 }
 
 export function deleteResource(id: number) {

@@ -18,7 +18,7 @@ export type VaultNote = {
   updatedAt: string;
 };
 
-export type ResourceKind = 'pdf' | 'image' | 'video' | 'link';
+export type ResourceKind = 'pdf' | 'image' | 'video' | 'link' | 'file';
 
 export type VaultResource = {
   id: number;

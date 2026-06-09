@@ -36,6 +36,7 @@ function createWindow() {
     minHeight: 760,
     backgroundColor: '#020617',
     title: 'StudyVault',
+    icon: path.join(__dirname, '../dist/icon.ico'),
     webPreferences: {
       preload: preloadPath,
       contextIsolation: true,
@@ -84,6 +85,7 @@ app.whenReady().then(async () => {
   ipcMain.handle('resources:upload', async (_event, input: { subjectId: number | null; kind: Exclude<ResourceKind, 'link'> }) => {
     const filters = {
       pdf: [{ name: 'PDF Documents', extensions: ['pdf'] }],
+      file: [{ name: 'All Files', extensions: ['*'] }],
       image: [{ name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp'] }],
       video: [{ name: 'Videos', extensions: ['mp4', 'mov', 'mkv', 'avi', 'webm', 'm4v'] }],
     }[input.kind];

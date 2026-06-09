@@ -336,8 +336,8 @@ export default function App() {
           ) : (
             <section className="flex-1 bg-[#fbf8ef] p-6">
               <div className="mb-5 flex flex-wrap gap-2">
-                <button onClick={() => handleUpload('pdf')} className="rounded-md bg-stone-950 px-4 py-2 text-sm font-medium text-white">
-                  Upload PDF
+                <button onClick={() => handleUpload('file')} className="rounded-md bg-stone-950 px-4 py-2 text-sm font-medium text-white">
+                  Upload File
                 </button>
                 <button onClick={() => handleUpload('image')} className="rounded-md bg-stone-950 px-4 py-2 text-sm font-medium text-white">
                   Upload image

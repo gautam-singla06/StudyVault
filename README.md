@@ -72,21 +72,6 @@ Whether you're preparing for exams, managing multiple subjects, or collecting re
 
 ---
 
-## 📸 Screenshots
-
-> Add application screenshots here.
-
-### Dashboard
-![Dashboard](screenshots/dashboard.png)
-
-### Subject Management
-![Subjects](screenshots/subjects.png)
-
-### Notes Section
-![Notes](screenshots/notes.png)
-
----
-
 ## ⚡ Installation
 
 Clone the repository:

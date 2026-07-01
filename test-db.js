@@ -1,3 +1,5 @@
+#test file
+
 const { initDatabase, createSubject, listSubjects } = require('./dist-electron/db.js');
 
 async function main() {
